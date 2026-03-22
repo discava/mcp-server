@@ -10,14 +10,14 @@
  *   npm install @modelcontextprotocol/sdk zod
  *
  * Usage:
- *   npx tsx discava-mcp-server.ts
+ *   npx tsx server.ts
  *
  * Configure in Claude Desktop (~/.claude/claude_desktop_config.json):
  *   {
  *     "mcpServers": {
  *       "discava": {
  *         "command": "npx",
- *         "args": ["tsx", "/path/to/discava-mcp-server.ts"]
+ *         "args": ["tsx", "/path/to/server.ts"]
  *       }
  *     }
  *   }

@@ -52,7 +52,7 @@ const server = new McpServer({ name: 'discava', version: '1.0.0' });
 
 server.tool(
   'search_businesses',
-  'Search for local businesses. Returns name, category, city, country, and scores. For full details (address, phone, website, opening hours), call get_business with comma-separated IDs for batch retrieval.',
+  'Search for local businesses. Returns name, category, city, country, logo_url, available_details (what data exists), and scores. Check available_details to see what is available, then call get_business for full details.',
   {
     query: z.string().optional().describe('Search query (e.g. "plumber", "Zahnarzt", "Italian restaurant")'),
     city: z.string().optional().describe('City name (e.g. "Hamburg", "Wien", "New York")'),
@@ -82,7 +82,7 @@ server.tool(
 
 server.tool(
   'get_business',
-  'Get full details for one or more businesses: address, phone, website, opening hours, services, payment methods, coordinates. Pass comma-separated IDs for batch.',
+  'Get full details for one or more businesses: address, phone, website, opening hours, services, payment methods, social links, logo, business image, coordinates. Pass comma-separated IDs for batch.',
   { id: z.string().describe('One or more business IDs, comma-separated for batch (e.g. "id1,id2,id3")') },
   async ({ id }) => jsonContent(await api(`/business/${id}`))
 );

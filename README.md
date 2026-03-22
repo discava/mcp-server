@@ -2,6 +2,8 @@
 
 MCP server for AI agents to search local businesses worldwide via the Discava API.
 
+[![discava – Business Directory for AI MCP server](https://glama.ai/mcp/servers/discava/mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/discava/mcp-server)
+
 ## Setup
 
 ### Claude Desktop

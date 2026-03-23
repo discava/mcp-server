@@ -48,7 +48,7 @@ function jsonContent(data: unknown) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }] };
 }
 
-const server = new McpServer({ name: 'discava', version: '1.0.0' });
+const server = new McpServer({ name: 'discava', version: '1.1.0' });
 
 server.tool(
   'search_businesses',
@@ -64,8 +64,9 @@ server.tool(
     lang: z.string().optional().default('en').describe('Language for labels: "de" or "en"'),
     lat: z.number().optional().describe('Latitude for distance'),
     lon: z.number().optional().describe('Longitude for distance'),
+    format: z.enum(['json', 'html']).optional().default('json').describe('Response format: "json" (default) or "html" for interactive cards'),
   },
-  async ({ query, city, country, category, limit, page, min_confidence, lang, lat, lon }) => {
+  async ({ query, city, country, category, limit, page, min_confidence, lang, lat, lon, format }) => {
     const params = new URLSearchParams({ country });
     if (query) params.set('q', query);
     if (city) params.set('city', city);
@@ -76,6 +77,11 @@ server.tool(
     if (lang) params.set('lang', lang);
     if (lat !== undefined) params.set('lat', String(lat));
     if (lon !== undefined) params.set('lon', String(lon));
+    if (format && format !== 'json') params.set('format', format);
+    if (format === 'html') {
+      const res = await fetch(`${API_BASE}/search?${params}`);
+      return { content: [{ type: 'text' as const, text: await res.text() }] };
+    }
     return jsonContent(await api(`/search?${params}`));
   }
 );
@@ -83,8 +89,17 @@ server.tool(
 server.tool(
   'get_business',
   'Get full details for one or more businesses: address, phone, website, opening hours, services, payment methods, social links, logo, business image, coordinates. Pass comma-separated IDs for batch.',
-  { id: z.string().describe('One or more business IDs, comma-separated for batch (e.g. "id1,id2,id3")') },
-  async ({ id }) => jsonContent(await api(`/business/${id}`))
+  {
+    id: z.string().describe('One or more business IDs, comma-separated for batch (e.g. "id1,id2,id3")'),
+    format: z.enum(['json', 'html']).optional().default('json').describe('Response format: "json" (default) or "html" for interactive cards'),
+  },
+  async ({ id, format }) => {
+    if (format === 'html') {
+      const res = await fetch(`${API_BASE}/business/${id}?format=html`);
+      return { content: [{ type: 'text' as const, text: await res.text() }] };
+    }
+    return jsonContent(await api(`/business/${id}`));
+  }
 );
 
 server.tool(
